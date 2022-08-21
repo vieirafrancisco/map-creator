@@ -7,6 +7,7 @@ FPS = 60
 # colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+GRAY = (75, 75, 75)
 
 
 class App:
@@ -32,7 +33,42 @@ class App:
 
     def render(self):
         # canvas
-        self.canvas.fill(WHITE)
+        self.canvas.fill((27, 27, 27))
+
+        for j in range(0, self.canvas.get_height(), 32):
+            pg.draw.line(
+                self.canvas,
+                GRAY,
+                (0, j),
+                (self.canvas.get_width(), j),
+            )
+
+        for i in range(0, self.canvas.get_width(), 32):
+            pg.draw.line(
+                self.canvas,
+                GRAY,
+                (i, 0),
+                (i, self.canvas.get_height()),
+            )
+
+        mx, my = pg.mouse.get_pos()
+        cx, cy = (WIDTH - self.canvas.get_width(), 0)
+
+        if (
+            cx <= mx < self.canvas.get_width()
+            and cy <= my < self.canvas.get_height()
+        ):
+            px = (mx - cx) >> 5
+            py = (my - cy) >> 5
+
+            x = px * 32
+            y = py * 32
+
+            hover_surface = pg.Surface((32, 32), pg.SRCALPHA)
+            hover_surface.fill((0, 0, 0, 90))
+            self.canvas.blit(hover_surface, (x, y))
+
+        # TODO: hud
 
         self.window.blit(self.canvas, (WIDTH - self.canvas.get_width(), 0))
 
