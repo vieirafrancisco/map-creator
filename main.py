@@ -1,13 +1,8 @@
 import pygame as pg
 
-WIDTH = 1280
-HEIGHT = 720
-FPS = 60
-
-# colors
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-GRAY = (75, 75, 75)
+from settings import WIDTH, HEIGHT, BLACK, GRAY, FPS
+from utils import open_file_from_explorer
+from widgets import Button
 
 
 class App:
@@ -26,6 +21,13 @@ class App:
 
         # canvas
         self.canvas = pg.Surface((3 / 4 * WIDTH, HEIGHT))
+        self.load_tileset_btn = Button(
+            "Load Tileset",
+            10,
+            10,
+            callback=open_file_from_explorer,
+            color=GRAY,
+        )
 
     def cleanup(self):
         pg.font.quit()
@@ -55,8 +57,8 @@ class App:
         cx, cy = (WIDTH - self.canvas.get_width(), 0)
 
         if (
-            cx <= mx < self.canvas.get_width()
-            and cy <= my < self.canvas.get_height()
+            cx <= mx < self.canvas.get_width() + cx
+            and cy <= my < self.canvas.get_height() + cy
         ):
             px = (mx - cx) >> 5
             py = (my - cy) >> 5
@@ -68,7 +70,8 @@ class App:
             hover_surface.fill((0, 0, 0, 90))
             self.canvas.blit(hover_surface, (x, y))
 
-        # TODO: hud
+        # hud
+        self.load_tileset_btn.draw(self.window)
 
         self.window.blit(self.canvas, (WIDTH - self.canvas.get_width(), 0))
 
@@ -78,6 +81,8 @@ class App:
     def handle_envent(self, event):
         if event.type == pg.QUIT:
             self.is_running = False
+        if event.type == pg.MOUSEBUTTONDOWN:
+            self.load_tileset_btn.click()
 
     def execute(self):
         self.start()
